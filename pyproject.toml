@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "openai-compatible-api-probe"
+version = "0.1.0"
+description = "A tool to probe and analyze OpenAI-compatible APIs for feature support"
+authors = ["Taqi Jaffri <tjaffri@gmail.com>"]
+readme = "README.md"
+packages = [{include = "openai_compatible_api_probe"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+openai = "^1.12.0"
+typer = "^0.9.0"
+rich = "^13.7.0"
+pydantic = "^2.6.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.2.0"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+openai-probe = "openai_compatible_api_probe.cli:main" 
