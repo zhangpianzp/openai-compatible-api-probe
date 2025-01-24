@@ -14,14 +14,12 @@ class ModelCapabilities(BaseModel):
     supports_function_calling: bool = False
     supports_json_mode: bool = False
     supports_vision: bool = False
-    supports_embeddings: bool = False
-    max_tokens: Optional[int] = None
     details: str = ""  # Will contain success details or error message
 
 class ProbeResult(BaseModel):
     """Results of the API probe."""
-    available_models: List[str] = []
-    model_capabilities: Dict[str, ModelCapabilities] = {}
+    model_id: str
+    capabilities: ModelCapabilities
     error_message: Optional[str] = None
 
 class APIProbe:
@@ -64,8 +62,7 @@ class APIProbe:
             logger.info(f"Testing chat completion for model: {model}")
             response = await self.client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content": "Hello"}],
-                max_tokens=10
+                messages=[{"role": "user", "content": "Hello"}]
             )
             return True, f"Chat completion successful. Response: {response.choices[0].message.content}"
         except Exception as e:
@@ -89,8 +86,7 @@ class APIProbe:
                             "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
                         }
                     }
-                }],
-                max_tokens=10
+                }]
             )
             return True, f"Function calling successful. Response type: {response.choices[0].message.content}"
         except Exception as e:
@@ -104,8 +100,7 @@ class APIProbe:
             response = await self.client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": "Return a simple JSON object"}],
-                response_format={"type": "json_object"},
-                max_tokens=10
+                response_format={"type": "json_object"}
             )
             return True, "JSON mode successful"
         except Exception as e:
@@ -134,28 +129,14 @@ class APIProbe:
                             }
                         ]
                     }
-                ],
-                max_tokens=10
+                ]
             )
             return True, "Vision features supported"
         except Exception as e:
             logger.warning(f"Vision test failed for {model}: {str(e)}")
             return False, f"Vision features not supported: {str(e)}"
 
-    async def _test_embeddings(self, model: str) -> tuple[bool, str]:
-        """Test if the model supports embeddings."""
-        try:
-            logger.info(f"Testing embeddings for model: {model}")
-            response = await self.client.embeddings.create(
-                model=model,
-                input="Hello, world"
-            )
-            return True, f"Embeddings supported. Vector dimension: {len(response.data[0].embedding)}"
-        except Exception as e:
-            logger.warning(f"Embeddings test failed for {model}: {str(e)}")
-            return False, f"Embeddings not supported: {str(e)}"
-
-    async def probe_model(self, model: str) -> ModelCapabilities:
+    async def probe_model(self, model: str) -> ProbeResult:
         """Probe a specific model for its capabilities."""
         logger.info(f"Starting probe for model: {model}")
         capabilities = ModelCapabilities()
@@ -180,34 +161,14 @@ class APIProbe:
             capabilities.supports_vision = vision_supported
             details.append(f"Vision: {vision_details}")
 
-        # Test embeddings separately
-        emb_supported, emb_details = await self._test_embeddings(model)
-        capabilities.supports_embeddings = emb_supported
-        details.append(f"Embeddings: {emb_details}")
-
         capabilities.details = "\n".join(details)
         logger.info(f"Completed probe for model: {model}")
-        return capabilities
+        return ProbeResult(model_id=model, capabilities=capabilities)
 
-    async def run(self) -> ProbeResult:
-        """Run the probe against the API endpoint."""
-        logger.info("Starting API probe")
-        result = ProbeResult()
-        try:
-            # Get available models
-            logger.info("Fetching available models")
-            models_response = await self.client.models.list()
-            result.available_models = [model.id for model in models_response.data]
-            logger.info(f"Found {len(result.available_models)} models")
-            
-            # Test capabilities for each model
-            for model_id in result.available_models:
-                result.model_capabilities[model_id] = await self.probe_model(model_id)
-                
-        except Exception as e:
-            error_msg = f"Failed to probe API: {str(e)}"
-            logger.error(error_msg)
-            result.error_message = error_msg
-        
-        logger.info("API probe completed")
-        return result 
+    async def list_models(self) -> List[str]:
+        """List available models from the API."""
+        logger.info("Fetching available models")
+        models_response = await self.client.models.list()
+        models = [model.id for model in models_response.data]
+        logger.info(f"Found {len(models)} models")
+        return models 

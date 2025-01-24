@@ -25,4 +25,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-openai-probe = "openai_compatible_api_probe.cli:main" 
+openai-probe = "openai_compatible_api_probe.cli:app" 

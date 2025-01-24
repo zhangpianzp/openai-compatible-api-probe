@@ -1,19 +1,19 @@
 # OpenAI Compatible API Probe
 
-A Python tool to probe and analyze OpenAI-compatible APIs, checking for model availability and feature support across different providers.
+A Python tool to probe and analyze OpenAI-compatible APIs, checking for model availability and feature support across different providers. This is useful when working with alternative AI providers that offer OpenAI-compatible endpoints (like Groq, Fireworks, Anyscale, etc.) to understand which features are supported.
 
 ## Features
 
-- Discovers available models from any OpenAI-compatible API endpoint
-- Tests model capabilities for:
-  - Function calling
-  - Structured input/output
-  - Image handling (multi-modality)
-  - Chat completions
-  - Embeddings
-- Generates machine-readable reports of API capabilities
-- CLI tool for easy probing and reporting
-- Flexible configuration via environment variables or direct parameters
+The probe tests each model for support of:
+- Chat completions (basic chat functionality)
+- Function calling (ability to define and call functions)
+- JSON mode (structured JSON output)
+- Vision capabilities (ability to process images)
+
+For each feature, it provides detailed information about:
+- Whether the feature is supported
+- The actual API response or error message received
+- Any specific limitations or requirements
 
 ## Installation
 
@@ -31,44 +31,93 @@ poetry install
 
 ## Usage
 
-### Command Line Interface
+### Interactive CLI
+
+The tool provides an interactive CLI interface with several options:
 
 ```bash
-# Using environment variables
+# Start the interactive interface
+openai-probe probe
+
+# Use a different API endpoint
+openai-probe probe --api-base "https://api.groq.com/v1"
+
+# Get JSON output instead of tables
+openai-probe probe --json
+```
+
+The interactive interface allows you to:
+1. List all available models
+2. Probe a specific model
+3. Probe models matching a pattern (e.g., all GPT-4 models)
+4. Probe all available models
+
+### Environment Variables
+
+Configure the tool using environment variables:
+```bash
+# Required settings
 export OPENAI_API_KEY="your-api-key"
 export OPENAI_API_BASE="https://api.provider.com/v1"
-openai-probe
+```
 
-# Or specify directly
-openai-probe --api-key "your-api-key" --api-base "https://api.provider.com/v1"
+Or create a `.env` file:
+```
+OPENAI_API_KEY=your-api-key
+OPENAI_API_BASE=https://api.provider.com/v1
 ```
 
 ### Python API
 
+You can also use the tool programmatically in your Python code:
+
 ```python
 from openai_compatible_api_probe import APIProbe
 
-# Using environment variables
-probe = APIProbe()
-
-# Or specify directly
+# Initialize the probe
 probe = APIProbe(
     api_key="your-api-key",
     api_base="https://api.provider.com/v1"
 )
 
-# Run the probe and get results
-results = probe.run()
-print(results.to_dict())  # Get machine-readable results
-print(results.to_markdown())  # Get human-readable report
+# List available models
+models = await probe.list_models()
+
+# Probe a specific model
+result = await probe.probe_model("gpt-4")
+
+# Check capabilities
+if result.capabilities.supports_chat:
+    print("Model supports chat!")
+if result.capabilities.supports_function_calling:
+    print("Model supports function calling!")
+
+# Get detailed results
+print(result.model_dump_json(indent=2))
 ```
 
-## Environment Variables
+## Example Output
 
-- `OPENAI_API_KEY`: Your API key
-- `OPENAI_API_BASE`: Base URL of the API endpoint
-- `OPENAI_API_VERSION`: (Optional) API version if required
-- `OPENAI_ORGANIZATION`: (Optional) Organization ID if required
+When probing a model, you'll see a table like this:
+
+```
+OpenAI API Compatibility Report - gpt-4
+┏━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Feature   ┃ Supported ┃ Details                              ┃
+┡━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Chat      │     ✓    │ Chat completion successful           │
+│ Functions │     ✓    │ Function calling supported           │
+│ JSON Mode │     ✓    │ JSON mode successful                │
+│ Vision    │     ✗    │ Vision features not supported       │
+└──────────┴───────────┴──────────────────────────────────────┘
+```
+
+## Common Use Cases
+
+1. **API Provider Evaluation**: When choosing between different OpenAI-compatible providers, quickly compare their feature support.
+2. **Compatibility Testing**: Before deploying your application with a new provider, verify that all required features are supported.
+3. **Model Selection**: Find models that support specific features like function calling or JSON mode.
+4. **API Integration**: Debug API integration issues by understanding exactly which features work and which don't.
 
 ## Development
 
