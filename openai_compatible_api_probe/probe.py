@@ -82,30 +82,36 @@ class APIProbe:
         """Test if the model supports function calling."""
         try:
             logger.info(f"Testing function calling for model: {model}")
+
+            tools = [{
+                "type": "function",
+                "function": {
+                    "name": "get_weather",
+                    "description": "Get current temperature for a given location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "City and country e.g. Bogotá, Colombia"
+                            }
+                        },
+                        "required": [
+                            "location"
+                        ],
+                        "additionalProperties": False
+                    },
+                }
+            }]
+
             response = await self.client.chat.completions.create(
                 model=model,
-                messages=[
-                    {"role": "user", "content": "What's the weather like in Tokyo right now? Make sure you use the get_weather function."}
-                ],
-                functions=[
-                    {
-                        "name": "get_weather",
-                        "description": "Get the weather in a location right now",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "location": {"type": "string"},
-                                "unit": {
-                                    "type": "string",
-                                    "enum": ["celsius", "fahrenheit"],
-                                },
-                            },
-                        },
-                    }
-                ],
+                messages=[{"role": "user", "content": "What is the weather like in Paris today? Make sure you use the get_weather function."}],
+                tools=tools
             )
+
             message = response.choices[0].message
-            assert message.function_call is not None, message
+            assert message.tool_calls is not None, message
             return True, f"Function calling successful. Response: {message}"
         except Exception as e:
             logger.warning(f"Function calling test failed for {model}: {str(e)}")
