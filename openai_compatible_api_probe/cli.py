@@ -28,7 +28,12 @@ console = Console()
 
 def format_result_table(result: ProbeResult) -> Table:
     """Format the probe results into a rich table."""
-    table = Table(title=f"OpenAI API Compatibility Report - {result.model_id}")
+    table = Table(
+        title=f"OpenAI API Compatibility Report - {result.model_id}\nAPI URL: {result.api_base}",
+        show_header=True,
+        header_style="bold magenta",
+        show_lines=True,  # This adds horizontal separators
+    )
 
     # Add columns
     table.add_column("Feature", style="cyan")
@@ -51,10 +56,15 @@ def format_result_table(result: ProbeResult) -> Table:
             ),
         )
         table.add_row(
-            "JSON Mode",
-            "✓" if capabilities.supports_json_mode else "✗",
+            "Structured Output",
+            "✓" if capabilities.supports_structured_output else "✗",
             next(
-                (d for d in capabilities.details.split("\n") if "JSON Mode:" in d), ""
+                (
+                    d
+                    for d in capabilities.details.split("\n")
+                    if "Structured Output:" in d
+                ),
+                "",
             ),
         )
         table.add_row(
@@ -297,7 +307,7 @@ def callback(
     - Test models matching a pattern
     - Test all available models
 
-    Results show support for: chat completions, function calling, JSON mode, and vision.
+    Results show support for: chat completions, function calling, structured output, and vision.
     """
     if ctx.invoked_subcommand is None:
         if not version:

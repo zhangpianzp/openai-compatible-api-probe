@@ -15,7 +15,7 @@ class ModelCapabilities(BaseModel):
 
     supports_chat: bool = False
     supports_function_calling: bool = False
-    supports_json_mode: bool = False
+    supports_structured_output: bool = False
     supports_vision: bool = False
     details: str = ""  # Will contain success details or error message
 
@@ -26,6 +26,7 @@ class ProbeResult(BaseModel):
     model_id: str
     capabilities: ModelCapabilities
     error_message: Optional[str] = None
+    api_base: str
 
 
 class APIProbe:
@@ -104,26 +105,45 @@ class APIProbe:
                 ],
             )
             message = response.choices[0].message
-            assert message.function_call is not None
+            assert message.function_call is not None, "Function call is None"
             return True, f"Function calling successful. Response: {message}"
         except Exception as e:
             logger.warning(f"Function calling test failed for {model}: {str(e)}")
             return False, f"Function calling failed: {str(e)}"
 
-    async def _test_json_mode(self, model: str) -> Tuple[bool, str]:
-        """Test if the model supports JSON mode."""
+    async def _test_structured_output(self, model: str) -> Tuple[bool, str]:
+        """Test if the model supports Structured Output."""
         try:
-            logger.info(f"Testing JSON mode for model: {model}")
-            response = await self.client.chat.completions.create(
+
+            class CalendarEvent(BaseModel):
+                name: str
+                date: str
+                participants: list[str]
+
+            response = await self.client.beta.chat.completions.parse(
                 model=model,
-                messages=[{"role": "user", "content": "Return a simple JSON object"}],
-                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": "Extract the event information."},
+                    {
+                        "role": "user",
+                        "content": "Alice and Bob are going to a science fair on Friday.",
+                    },
+                ],
+                response_format=CalendarEvent,
             )
+
             message = response.choices[0].message
-            return True, f"JSON mode successful. Response: {message}"
+            assert message is not None, "Message is None"
+            event = message.parsed
+            assert event is not None, "Event is None"
+            assert event.name is not None, "Event name is None"
+            assert event.date is not None, "Event date is None"
+            assert event.participants is not None, "Event participants is None"
+
+            return True, f"Structured Output test successful. Response: {message}"
         except Exception as e:
-            logger.warning(f"JSON mode test failed for {model}: {str(e)}")
-            return False, f"JSON mode failed: {str(e)}"
+            logger.warning(f"Structured Output test failed for {model}: {str(e)}")
+            return False, f"Structured Output test failed: {str(e)}"
 
     async def _test_vision(self, model: str) -> Tuple[bool, str]:
         """Test if the model supports vision features."""
@@ -168,9 +188,9 @@ class APIProbe:
             capabilities.supports_function_calling = func_supported
             details.append(f"Functions: {func_details}")
 
-            json_supported, json_details = await self._test_json_mode(model)
-            capabilities.supports_json_mode = json_supported
-            details.append(f"JSON Mode: {json_details}")
+            json_supported, json_details = await self._test_structured_output(model)
+            capabilities.supports_structured_output = json_supported
+            details.append(f"Structured Output: {json_details}")
 
             vision_supported, vision_details = await self._test_vision(model)
             capabilities.supports_vision = vision_supported
@@ -178,7 +198,9 @@ class APIProbe:
 
         capabilities.details = "\n".join(details)
         logger.info(f"Completed probe for model: {model}")
-        return ProbeResult(model_id=model, capabilities=capabilities)
+        return ProbeResult(
+            model_id=model, capabilities=capabilities, api_base=self.config.api_base
+        )
 
     async def list_models(self) -> List[str]:
         """List available models from the API."""

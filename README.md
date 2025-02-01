@@ -7,7 +7,7 @@ A Python tool to probe and analyze OpenAI-compatible APIs, checking for model av
 The probe tests each model for support of:
 - Chat completions (basic chat functionality)
 - Function calling (ability to define and call functions)
-- JSON mode (structured JSON output)
+- Structured output (structured JSON output)
 - Vision capabilities (ability to process images)
 
 For each feature, it provides detailed information about:
@@ -101,26 +101,26 @@ print(result.model_dump_json(indent=2))
 When probing a model, you'll see a table like this:
 
 ```
-                  OpenAI API Compatibility Report - gpt-4                   
-                  API URL: https://api.openai.com/v1
-┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Feature   ┃ Supported ┃ Details                                         ┃
-┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ Chat      ┃     ✓    ┃ Chat completion successful                      ┃
-┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ Functions ┃     ✓    ┃ Function calling supported                      ┃
-┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ JSON Mode ┃     ✓    ┃ JSON mode successful                           ┃
-┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ Vision    ┃     ✗    ┃ Vision features not supported                  ┃
-┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+                       OpenAI API Compatibility Report - gpt-4                       
+                          API URL: https://api.openai.com/v1
+┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Feature           ┃ Supported ┃ Details                                         ┃
+┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Chat             ┃ ✓         ┃ Chat completion successful                      ┃
+┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Functions        ┃ ✓         ┃ Function calling successful                     ┃
+┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Structured Output┃ ✓         ┃ Structured output test successful               ┃
+┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Vision           ┃ ✓         ┃ Vision features supported                       ┃
+┗━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 ## Common Use Cases
 
 1. **API Provider Evaluation**: When choosing between different OpenAI-compatible providers, quickly compare their feature support.
 2. **Compatibility Testing**: Before deploying your application with a new provider, verify that all required features are supported.
-3. **Model Selection**: Find models that support specific features like function calling or JSON mode.
+3. **Model Selection**: Find models that support specific features like function calling or structured output.
 4. **API Integration**: Debug API integration issues by understanding exactly which features work and which don't.
 
 ## Development

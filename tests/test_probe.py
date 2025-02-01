@@ -52,7 +52,7 @@ async def test_probe_model_chat_supported(probe, mock_openai_client):
         MagicMock(
             choices=[MagicMock(message=MagicMock(content="Weather function called"))]
         ),
-        # JSON mode response
+        # Structured utput response
         MagicMock(choices=[MagicMock(message=MagicMock(content='{"status": "ok"}'))]),
         # Vision response (fails)
         Exception("Vision not supported"),
@@ -66,8 +66,9 @@ async def test_probe_model_chat_supported(probe, mock_openai_client):
     assert result.model_id == "gpt-4"
     assert result.capabilities.supports_chat is True
     assert result.capabilities.supports_function_calling is True
-    assert result.capabilities.supports_json_mode is True
+    assert result.capabilities.supports_structured_output is True
     assert result.capabilities.supports_vision is False
+    assert result.api_base == "https://test.api/v1"
     assert "Hello!" in result.capabilities.details
     assert "Weather function called" in result.capabilities.details
     assert "Vision not supported" in result.capabilities.details
@@ -88,11 +89,12 @@ async def test_probe_model_chat_not_supported(probe, mock_openai_client):
     assert isinstance(result, ProbeResult)
     assert result.model_id == "non-chat-model"
     assert result.capabilities.supports_chat is False
+    assert result.api_base == "https://test.api/v1"
     assert (
         result.capabilities.supports_function_calling is False
     )  # Not tested because chat failed
     assert (
-        result.capabilities.supports_json_mode is False
+        result.capabilities.supports_structured_output is False
     )  # Not tested because chat failed
     assert (
         result.capabilities.supports_vision is False
