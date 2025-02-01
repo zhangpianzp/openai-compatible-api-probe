@@ -85,12 +85,12 @@ class APIProbe:
             response = await self.client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "user", "content": "What's the weather like in Tokyo?"}
+                    {"role": "user", "content": "What's the weather like in Tokyo right now? Make sure you use the get_weather function."}
                 ],
                 functions=[
                     {
                         "name": "get_weather",
-                        "description": "Get the weather in a location",
+                        "description": "Get the weather in a location right now",
                         "parameters": {
                             "type": "object",
                             "properties": {
@@ -105,7 +105,7 @@ class APIProbe:
                 ],
             )
             message = response.choices[0].message
-            assert message.function_call is not None, "Function call is None"
+            assert message.function_call is not None, message
             return True, f"Function calling successful. Response: {message}"
         except Exception as e:
             logger.warning(f"Function calling test failed for {model}: {str(e)}")
@@ -133,12 +133,12 @@ class APIProbe:
             )
 
             message = response.choices[0].message
-            assert message is not None, "Message is None"
+            assert message is not None, message
             event = message.parsed
-            assert event is not None, "Event is None"
-            assert event.name is not None, "Event name is None"
-            assert event.date is not None, "Event date is None"
-            assert event.participants is not None, "Event participants is None"
+            assert event is not None, message
+            assert event.name is not None, message
+            assert event.date is not None, message
+            assert event.participants is not None, message
 
             return True, f"Structured Output test successful. Response: {message}"
         except Exception as e:
