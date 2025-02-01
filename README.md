@@ -101,15 +101,19 @@ print(result.model_dump_json(indent=2))
 When probing a model, you'll see a table like this:
 
 ```
-OpenAI API Compatibility Report - gpt-4
-┏━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Feature   ┃ Supported ┃ Details                              ┃
-┡━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ Chat      │     ✓    │ Chat completion successful           │
-│ Functions │     ✓    │ Function calling supported           │
-│ JSON Mode │     ✓    │ JSON mode successful                │
-│ Vision    │     ✗    │ Vision features not supported       │
-└──────────┴───────────┴──────────────────────────────────────┘
+                  OpenAI API Compatibility Report - gpt-4                   
+                  API URL: https://api.openai.com/v1
+┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Feature   ┃ Supported ┃ Details                                         ┃
+┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Chat      ┃     ✓    ┃ Chat completion successful                      ┃
+┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Functions ┃     ✓    ┃ Function calling supported                      ┃
+┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ JSON Mode ┃     ✓    ┃ JSON mode successful                           ┃
+┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ Vision    ┃     ✗    ┃ Vision features not supported                  ┃
+┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 ## Common Use Cases

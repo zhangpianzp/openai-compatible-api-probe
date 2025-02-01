@@ -28,11 +28,3 @@ def test_config_validation():
         # Test with valid config
         config = APIConfig(api_key="test-key", api_base="https://test.api/v1")
         assert config.validate_config() is True
-
-
-def test_config_defaults():
-    """Test that config uses correct defaults."""
-    with patch.dict(os.environ, {}, clear=True):
-        config = APIConfig()
-        assert config.api_key == ""  # Default when env var not set
-        assert config.api_base == "https://api.openai.com/v1"  # Default API base

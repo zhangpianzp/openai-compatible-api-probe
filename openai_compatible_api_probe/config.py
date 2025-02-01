@@ -24,7 +24,7 @@ class APIConfig(BaseModel):
     def refresh_from_env(self) -> None:
         """Refresh config values from environment variables."""
         self.api_key = os.getenv("OPENAI_API_KEY", "")
-        self.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+        self.api_base = os.getenv("OPENAI_API_BASE", "")
 
     def validate_config(self) -> bool:
         """Validate that required configuration is present."""
