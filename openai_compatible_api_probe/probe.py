@@ -70,8 +70,9 @@ class APIProbe:
             response = await self.client.chat.completions.create(
                 model=model, messages=[{"role": "user", "content": "Hello"}]
             )
-            content = response.choices[0].message.content
-            return True, f"Chat completion successful. Response: {content}"
+            message = response.choices[0].message
+            assert message.content is not None
+            return True, f"Chat completion successful. Response: {message}"
         except Exception as e:
             logger.warning(f"Chat completion test failed for {model}: {str(e)}")
             return False, f"Chat completion failed: {str(e)}"
@@ -82,7 +83,9 @@ class APIProbe:
             logger.info(f"Testing function calling for model: {model}")
             response = await self.client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content": "What's the weather?"}],
+                messages=[
+                    {"role": "user", "content": "What's the weather like in Tokyo?"}
+                ],
                 functions=[
                     {
                         "name": "get_weather",
@@ -100,8 +103,9 @@ class APIProbe:
                     }
                 ],
             )
-            content = response.choices[0].message.content
-            return True, f"Function calling successful. Response type: {content}"
+            message = response.choices[0].message
+            assert message.function_call is not None
+            return True, f"Function calling successful. Response: {message}"
         except Exception as e:
             logger.warning(f"Function calling test failed for {model}: {str(e)}")
             return False, f"Function calling failed: {str(e)}"
@@ -110,12 +114,13 @@ class APIProbe:
         """Test if the model supports JSON mode."""
         try:
             logger.info(f"Testing JSON mode for model: {model}")
-            await self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": "Return a simple JSON object"}],
                 response_format={"type": "json_object"},
             )
-            return True, "JSON mode successful"
+            message = response.choices[0].message
+            return True, f"JSON mode successful. Response: {message}"
         except Exception as e:
             logger.warning(f"JSON mode test failed for {model}: {str(e)}")
             return False, f"JSON mode failed: {str(e)}"
