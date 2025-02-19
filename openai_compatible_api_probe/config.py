@@ -6,14 +6,14 @@ from pydantic import BaseModel
 
 def load_env_vars() -> None:
     """Load environment variables from .env file."""
-    load_dotenv()
+    load_dotenv(override=True)  # Make sure .env values take precedence
 
 
 class APIConfig(BaseModel):
     """Configuration for OpenAI-compatible API endpoints."""
 
     api_key: str = ""
-    api_base: str = "https://api.openai.com/v1"
+    api_base: str = ""  # No default value, will be loaded from env
 
     def __init__(self, **data: dict[str, str]) -> None:
         """Initialize config with optional data or environment variables."""
