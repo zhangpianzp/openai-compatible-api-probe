@@ -21,7 +21,6 @@ def version_callback(value: bool) -> None:
 app = typer.Typer(
     add_completion=False,
     help="Probe OpenAI-compatible APIs for model capabilities",
-    invoke_without_command=True,
 )
 console = Console()
 
@@ -258,37 +257,24 @@ async def interactive_menu_async(probe: APIProbe, json_output: bool) -> None:
             action()
 
 
-@app.command()
-def interactive(
+@app.callback(invoke_without_command=True)
+def main(
+    ctx: typer.Context,
     api_key: Optional[str] = typer.Option(
         None,
         "--api-key",
         "-k",
-        help="OpenAI API key. Uses OPENAI_API_KEY environment variable if not set.",
+        help="OpenAI API key. Uses OPENAI_API_KEY from .env if not set.",
     ),
     api_base: Optional[str] = typer.Option(
         None,
         "--api-base",
         "-b",
-        help="API base URL. Uses OPENAI_API_BASE environment variable if not set.",
+        help="API base URL. Uses OPENAI_API_BASE from .env if not set.",
     ),
     json_output: bool = typer.Option(
         False, "--json", "-j", help="Output results in JSON format instead of table"
     ),
-) -> None:
-    """Start the interactive probe interface."""
-    load_env_vars()  # Load environment variables
-    probe = APIProbe(api_key=api_key, api_base=api_base)
-    try:
-        asyncio.run(interactive_menu_async(probe, json_output))
-    except Exception as e:
-        rprint(f"[red]Error: {str(e)}[/red]")
-        raise typer.Exit(1)
-
-
-@app.callback(invoke_without_command=True)
-def callback(
-    ctx: typer.Context,
     version: bool = typer.Option(
         None,
         "--version",
@@ -299,28 +285,18 @@ def callback(
     ),
 ) -> None:
     """
-    Probe an OpenAI-compatible API endpoint to discover available models and capabilities.
-
-    This tool provides an interactive interface to:
-    - List all available models
-    - Probe specific models
-    - Test models matching a pattern
-    - Test all available models
-
-    Results show support for: chat completions, function calling, structured output, and vision.
+    Probe OpenAI-compatible APIs for model capabilities.
+    By default, starts in interactive mode.
     """
     if ctx.invoked_subcommand is None:
-        if not version:
-            ctx.info_name = ""
-            typer.echo(ctx.get_help())
-            raise typer.Exit()
+        # Load environment variables first
+        load_env_vars()
 
+        # Create probe instance
+        probe = APIProbe(api_key=api_key, api_base=api_base)
 
-def main() -> None:
-    """Main entry point for the CLI."""
-    load_env_vars()  # Load environment variables from .env file
-    app()
-
-
-if __name__ == "__main__":
-    main()
+        try:
+            asyncio.run(interactive_menu_async(probe, json_output))
+        except Exception as e:
+            rprint(f"[red]Error: {str(e)}[/red]")
+            raise typer.Exit(1)

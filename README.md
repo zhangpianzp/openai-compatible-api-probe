@@ -31,37 +31,42 @@ poetry install
 
 ## Usage
 
-### Interactive CLI
+### Basic Usage
 
-The tool provides an interactive CLI interface with several options:
+Simply run the command to start in interactive mode:
 
 ```bash
-# Start the interactive interface
-openai-probe probe
-
-# Use a different API endpoint
-openai-probe probe --api-base "https://api.groq.com/v1"
-
-# Get JSON output instead of tables
-openai-probe probe --json
+openai-probe
 ```
 
-The interactive interface allows you to:
-1. List all available models
-2. Probe a specific model
-3. Probe models matching a pattern (e.g., all GPT-4 models)
-4. Probe all available models
+This will automatically:
+1. Load API settings from your `.env` file
+2. Start the interactive interface where you can:
+   - List all available models
+   - Probe a specific model
+   - Probe models matching a pattern
+   - Probe all available models
+
+### Command Line Options
+
+```bash
+# Show help and available options
+openai-probe --help
+
+# Override API key from .env
+openai-probe --api-key "your-api-key"
+
+# Use a different API endpoint
+openai-probe --api-base "https://api.groq.com/v1"
+
+# Get JSON output instead of tables
+openai-probe --json
+```
 
 ### Environment Variables
 
-Configure the tool using environment variables:
-```bash
-# Required settings
-export OPENAI_API_KEY="your-api-key"
-export OPENAI_API_BASE="https://api.provider.com/v1"
-```
+The tool automatically reads from your `.env` file. Create one with:
 
-Or create a `.env` file:
 ```
 OPENAI_API_KEY=your-api-key
 OPENAI_API_BASE=https://api.provider.com/v1

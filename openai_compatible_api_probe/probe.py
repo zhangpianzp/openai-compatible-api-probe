@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional, Tuple
 
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionToolParam
 from pydantic import BaseModel
 
 from .config import APIConfig
@@ -83,31 +84,36 @@ class APIProbe:
         try:
             logger.info(f"Testing function calling for model: {model}")
 
-            tools = [{
-                "type": "function",
-                "function": {
-                    "name": "get_weather",
-                    "description": "Get current temperature for a given location.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "City and country e.g. Bogotá, Colombia"
-                            }
+            tools: List[ChatCompletionToolParam] = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_weather",
+                        "description": "Get current temperature for a given location.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "location": {
+                                    "type": "string",
+                                    "description": "City and country e.g. Bogotá, Colombia",
+                                }
+                            },
+                            "required": ["location"],
+                            "additionalProperties": False,
                         },
-                        "required": [
-                            "location"
-                        ],
-                        "additionalProperties": False
                     },
                 }
-            }]
+            ]
 
             response = await self.client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content": "What is the weather like in Paris today? Make sure you use the get_weather function."}],
-                tools=tools
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "What is the weather like in Paris today? Make sure you use the get_weather function.",
+                    }
+                ],
+                tools=tools,
             )
 
             message = response.choices[0].message
