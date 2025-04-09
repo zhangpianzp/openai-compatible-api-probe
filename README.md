@@ -2,6 +2,26 @@
 
 A Python tool to probe and analyze OpenAI-compatible APIs, checking for model availability and feature support across different providers. This is useful when working with alternative AI providers that offer OpenAI-compatible endpoints (like Groq, Fireworks, Anyscale, etc.) to understand which features are supported.
 
+## 安装pip包
+
+pip install canway_openai_compatible_test-0.1.0-py3-none-any.whl
+
+## 设置环境变量
+
+OPENAI_API_KEY=**
+OPENAI_API_BASE=https://openai.test/v1
+
+
+## 执行命令
+
+openai-probe
+
+## 按指引进行测试
+
+1. 列出模型
+2. 输入模型名字，进行兼容性测试
+
+
 ## Features
 
 The probe tests each model for support of:
@@ -115,10 +135,7 @@ When probing a model, you'll see a table like this:
 ┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
 ┃ Functions        ┃ ✓         ┃ Function calling successful                     ┃
 ┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ Structured Output┃ ✓         ┃ Structured output test successful               ┃
-┣━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-┃ Vision           ┃ ✓         ┃ Vision features supported                       ┃
-┗━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
 ```
 
 ## Common Use Cases

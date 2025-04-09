@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "canway-openai-compatible-test"
+name = "openai-compatible-test"
 version = "0.1.0"
 description = "A tool to probe and analyze OpenAI-compatible APIs for feature support"
-authors = ["canway"]
+authors = ["cw"]
 readme = "README.md"
 packages = [{include = "openai_compatible_api_probe"}]
 
