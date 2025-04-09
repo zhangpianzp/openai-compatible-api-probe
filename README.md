@@ -4,11 +4,12 @@ A Python tool to probe and analyze OpenAI-compatible APIs, checking for model av
 
 ## 安装pip包
 
-pip install canway_openai_compatible_test-0.1.0-py3-none-any.whl
+pip install openai-compatible-test-0.1.0-py3-none-any.whl
 
 ## 设置环境变量
 
 OPENAI_API_KEY=**
+
 OPENAI_API_BASE=https://openai.test/v1
 
 
