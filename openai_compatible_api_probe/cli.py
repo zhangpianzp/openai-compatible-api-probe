@@ -54,23 +54,23 @@ def format_result_table(result: ProbeResult) -> Table:
                 (d for d in capabilities.details.split("\n") if "Functions:" in d), ""
             ),
         )
-        table.add_row(
-            "Structured Output",
-            "✓" if capabilities.supports_structured_output else "✗",
-            next(
-                (
-                    d
-                    for d in capabilities.details.split("\n")
-                    if "Structured Output:" in d
-                ),
-                "",
-            ),
-        )
-        table.add_row(
-            "Vision",
-            "✓" if capabilities.supports_vision else "✗",
-            next((d for d in capabilities.details.split("\n") if "Vision:" in d), ""),
-        )
+#        table.add_row(
+#            "Structured Output",
+#            "✓" if capabilities.supports_structured_output else "✗",
+#            next(
+#                (
+#                    d
+#                    for d in capabilities.details.split("\n")
+#                    if "Structured Output:" in d
+#                ),
+#                "",
+#            ),
+#        )
+#        table.add_row(
+#            "Vision",
+#            "✓" if capabilities.supports_vision else "✗",
+#            next((d for d in capabilities.details.split("\n") if "Vision:" in d), ""),
+#        )
 
     return table
 
@@ -189,11 +189,11 @@ class InteractiveMenu:
     def display_menu(self) -> None:
         """Display the main menu options."""
         rprint("\n[bold]Main Menu[/bold]")
-        rprint("1. List all available models")
-        rprint("2. Probe a specific model")
-        rprint("3. Probe models matching a pattern")
-        rprint("4. Probe all models")
-        rprint("5. Exit")
+        rprint("1. 列出所有模型")
+        rprint("2. 指定模型名称进行验证")
+#        rprint("3. Probe models matching a pattern")
+#        rprint("4. Probe all models")
+#        rprint("5. Exit")
 
     def list_models(self) -> None:
         """Display all available models."""
@@ -244,7 +244,7 @@ async def interactive_menu_async(probe: APIProbe, json_output: bool) -> None:
     while True:
         menu.display_menu()
         choice = Prompt.ask(
-            "\nWhat would you like to do?", choices=["1", "2", "3", "4", "5"]
+            "\n请选择", choices=["1", "2"]
         )
 
         if choice == "5":

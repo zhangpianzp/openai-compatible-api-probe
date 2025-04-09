@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Poetry: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "poetry",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "args": [
+                "run",
+                "openai-probe"
+            ],
+        },
+        {
+            "name": "Python: Debug Probe",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/openai_compatible_api_probe/probe.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+        }
+    ]
+}

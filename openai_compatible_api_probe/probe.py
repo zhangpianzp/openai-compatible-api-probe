@@ -5,7 +5,7 @@ from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionToolParam
 from pydantic import BaseModel
 
-from .config import APIConfig
+from openai_compatible_api_probe.config import APIConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -200,13 +200,13 @@ class APIProbe:
             capabilities.supports_function_calling = func_supported
             details.append(f"Functions: {func_details}")
 
-            json_supported, json_details = await self._test_structured_output(model)
-            capabilities.supports_structured_output = json_supported
-            details.append(f"Structured Output: {json_details}")
-
-            vision_supported, vision_details = await self._test_vision(model)
-            capabilities.supports_vision = vision_supported
-            details.append(f"Vision: {vision_details}")
+#           json_supported, json_details = await self._test_structured_output(model)
+#           capabilities.supports_structured_output = json_supported
+#           details.append(f"Structured Output: {json_details}")
+#
+#           vision_supported, vision_details = await self._test_vision(model)
+#           capabilities.supports_vision = vision_supported
+#           details.append(f"Vision: {vision_details}")
 
         capabilities.details = "\n".join(details)
         logger.info(f"Completed probe for model: {model}")
@@ -221,3 +221,17 @@ class APIProbe:
         models = [model.id for model in models_response.data]
         logger.info(f"Found {len(models)} models")
         return models
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    async def main():
+        probe = APIProbe()
+        models = await probe.list_models()
+        if models:
+            logger.info(f"Testing first model: {models[0]}")
+            result = await probe.probe_model(models[0])
+            logger.info(f"Probe result: {result}")
+
+    asyncio.run(main())
